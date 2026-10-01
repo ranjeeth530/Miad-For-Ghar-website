@@ -18,14 +18,26 @@ import { DomesticHelper, BookingRequest, CustomInquiry, Testimonial } from './ty
 import { INITIAL_REVIEWS, SERVICE_CATEGORIES } from './constants/appData';
 import { BLOG_POSTS } from './constants/blogData';
 
-import { BookingModalSkeleton } from './components/BookingModalSkeleton';
+import { BookingModal } from './components/BookingModal';
 
-// Code-split heavy interactive modals & admin modules so initial page loads instantaneously
-const loadBookingModal = () => import('./components/BookingModal').then(m => ({ default: m.BookingModal }));
-const BookingModal = lazy(loadBookingModal);
-const GlobalSearchModal = lazy(() => import('./components/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal })));
-const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
-const AdminLoginModal = lazy(() => import('./components/AdminLoginModal').then(m => ({ default: m.AdminLoginModal })));
+// Preloading is no longer necessary as BookingModal is bundled directly for 0ms instant display
+const loadBookingModal = () => {};
+
+// Helper to retry dynamic imports if network drops momentarily on shared hosts like Hostinger
+const lazyWithRetry = (importFn: () => Promise<any>) =>
+  lazy(async () => {
+    try {
+      return await importFn();
+    } catch (error) {
+      console.warn('Initial chunk load failed, retrying once...', error);
+      await new Promise(resolve => setTimeout(resolve, 300));
+      return await importFn();
+    }
+  });
+
+const GlobalSearchModal = lazyWithRetry(() => import('./components/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal })));
+const AdminDashboard = lazyWithRetry(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminLoginModal = lazyWithRetry(() => import('./components/AdminLoginModal').then(m => ({ default: m.AdminLoginModal })));
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -743,17 +755,15 @@ function MainAppContent() {
         </Suspense>
       )}
 
-      {/* Step-by-Step Booking Modal */}
+      {/* Step-by-Step Booking Modal (Synchronously rendered with 0ms delay) */}
       {isBookingOpen && (
-        <Suspense fallback={<BookingModalSkeleton onClose={() => setIsBookingOpen(false)} />}>
-          <BookingModal
-            isOpen={isBookingOpen}
-            onClose={() => setIsBookingOpen(false)}
-            initialServiceId={bookingServiceId}
-            preselectedHelper={preselectedHelper}
-            onSubmitBooking={handleCreateBooking}
-          />
-        </Suspense>
+        <BookingModal
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          initialServiceId={bookingServiceId}
+          preselectedHelper={preselectedHelper}
+          onSubmitBooking={handleCreateBooking}
+        />
       )}
 
       {/* Quick Inquiry / Callback Modal */}

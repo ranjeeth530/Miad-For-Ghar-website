@@ -250,7 +250,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       aria-modal="true"
       aria-labelledby="booking-modal-title"
       onWheel={handleScrollWheel}
-      className="fixed inset-0 z-[70] bg-black/75 backdrop-blur-xs flex justify-center items-end sm:items-center p-0 sm:p-3 sm:py-6 overflow-hidden animate-in fade-in duration-150"
+      className="fixed inset-0 z-[70] bg-black/75 backdrop-blur-sm flex justify-center items-end sm:items-center p-0 sm:p-3 sm:py-6 overflow-hidden"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           resetAndClose();
@@ -258,7 +258,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       }}
     >
       <div 
-        className={`relative w-full sm:max-w-xl bg-white h-full sm:h-auto max-h-[100dvh] max-h-full sm:max-h-[90vh] rounded-t-2xl sm:rounded-2xl shadow-2xl border-0 sm:border sm:border-[#2A5A43]/20 flex flex-col text-left overflow-hidden ${className || ''}`}
+        className={`relative w-full sm:max-w-xl bg-white h-auto max-h-[96dvh] sm:max-h-[90vh] rounded-t-2xl sm:rounded-2xl shadow-2xl border-0 sm:border sm:border-[#2A5A43]/20 flex flex-col text-left overflow-hidden ${className || ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* COMPACT CLEAN HEADER */}
@@ -745,3 +745,5 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     </div>
   );
 };
+
+export default BookingModal;
