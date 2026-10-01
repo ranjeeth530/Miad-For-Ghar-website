@@ -1,0 +1,26 @@
+{
+  "name": "Maid for Ghar - Verified Domestic Help",
+  "short_name": "MaidForGhar",
+  "description": "India's trusted platform to hire background-verified house maids, experienced cooks, babysitters, elderly caregivers, and drivers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F5",
+  "theme_color": "#2A5A43",
+  "icons": [
+    {
+      "src": "/logo_maid_ghar_1788710443908.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo_maid_ghar_1788710443908.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo_maid_ghar_1788710443908.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Zero-Trust Default Deny: All client-side direct access is denied.
+    // All reads, writes, updates, and deletes must pass through the authorized server-side API.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection testing endpoint for health check verification only
+    match /test/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // All customer placement bookings are protected: client-side direct access is denied
+    match /bookings/{bookingId} {
+      allow read, write: if false;
+    }
+
+    // Quick customer callback inquiries: client-side direct access is denied
+    match /inquiries/{inquiryId} {
+      allow read, write: if false;
+    }
+
+    // Anonymous search telemetry: client-side direct access is denied
+    match /searchLogs/{logId} {
+      allow read, write: if false;
+    }
+
+    // Domestic staff / verified helpers directory: client-side direct access is denied
+    match /helpers/{helperId} {
+      allow read, write: if false;
+    }
+
+    // Customer testimonials and ratings: client-side direct access is denied
+    match /reviews/{reviewId} {
+      allow read, write: if false;
+    }
+
+    // Administrative settings: client-side direct access is denied
+    match /adminSettings/{settingId} {
+      allow read, write: if false;
+    }
+  }
+}
+

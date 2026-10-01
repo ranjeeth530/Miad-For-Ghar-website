@@ -1,0 +1,8 @@
+{
+  "name": "Remix Maid For Ghar",
+  "description": "Trusted domestic help platform for booking background-verified house maids, cooks, babysitters, elderly caregivers, and personal drivers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "entities": {
+    "Booking": {
+      "type": "object",
+      "description": "Domestic helper booking request made by a household customer",
+      "properties": {
+        "id": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "customerName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "city": { "type": "string" },
+        "locality": { "type": "string" },
+        "hoursPerDay": { "type": "number" },
+        "duration": { "type": "string" },
+        "preferredGender": { "type": "string" },
+        "cookingPreference": { "type": "string" },
+        "specialRequirements": { "type": "string" },
+        "estimatedCost": { "type": "number" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "assigned", "completed", "cancelled"]
+        },
+        "createdAt": { "type": "string" },
+        "assignedHelperId": { "type": "string" },
+        "assignedHelperName": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["customerName", "phone", "serviceId", "city", "status", "createdAt"]
+    },
+    "Inquiry": {
+      "type": "object",
+      "description": "Urgent callback or staffing inquiry submitted by a customer",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "city": { "type": "string" },
+        "serviceNeeded": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["new", "contacted", "resolved"]
+        },
+        "createdAt": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["name", "phone", "status", "createdAt"]
+    },
+    "SearchLog": {
+      "type": "object",
+      "description": "Customer search and filter telemetry log",
+      "properties": {
+        "id": { "type": "string" },
+        "query": { "type": "string" },
+        "city": { "type": "string" },
+        "category": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["timestamp"]
+    },
+    "AdminSettings": {
+      "type": "object",
+      "description": "Administrative agency passcode security hash and system metadata",
+      "properties": {
+        "id": { "type": "string" },
+        "passcodeHash": { "type": "string" },
+        "passcodeSalt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["passcodeHash", "passcodeSalt", "updatedAt"]
+    },
+    "Helper": {
+      "type": "object",
+      "description": "Background verified domestic helper profile",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "categoryTitle": { "type": "string" },
+        "city": { "type": "string" },
+        "locality": { "type": "string" },
+        "experienceYears": { "type": "number" },
+        "rating": { "type": "number" },
+        "verified": { "type": "boolean" },
+        "policeVerified": { "type": "boolean" },
+        "aadhaarVerified": { "type": "boolean" },
+        "available": { "type": "boolean" }
+      },
+      "required": ["name", "category", "city"]
+    },
+    "Review": {
+      "type": "object",
+      "description": "Customer feedback and review",
+      "properties": {
+        "id": { "type": "string" },
+        "authorName": { "type": "string" },
+        "location": { "type": "string" },
+        "serviceUsed": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "date": { "type": "string" }
+      },
+      "required": ["authorName", "rating", "comment"]
+    }
+  },
+  "firestore": {
+    "/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/Booking" },
+      "description": "All customer service placement bookings"
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": { "$ref": "#/entities/Inquiry" },
+      "description": "Customer quick callback inquiries"
+    },
+    "/searchLogs/{logId}": {
+      "schema": { "$ref": "#/entities/SearchLog" },
+      "description": "Anonymous search analytics telemetry"
+    },
+    "/adminSettings/{settingId}": {
+      "schema": { "$ref": "#/entities/AdminSettings" },
+      "description": "Server and agency configuration settings"
+    },
+    "/helpers/{helperId}": {
+      "schema": { "$ref": "#/entities/Helper" },
+      "description": "Verified domestic helpers catalog"
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Customer testimonials and ratings"
+    }
+  }
+}
