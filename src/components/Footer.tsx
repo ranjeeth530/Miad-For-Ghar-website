@@ -100,11 +100,11 @@ export const Footer: React.FC<FooterProps> = ({
                     <Instagram className="w-4 h-4 text-white stroke-[2.2] group-hover:scale-110 transition-transform" />
                   </a>
                   <a
-                    href="https://api.whatsapp.com/send?text=Hello%20Maid%20for%20Ghar!%20I%20would%20like%20to%20inquire%20about%20verified%20domestic%20staff."
+                    href="https://api.whatsapp.com/send?phone=919364798027&text=Hello%20Maid%20for%20Ghar!%20I%20would%20like%20to%20inquire%20about%20verified%20domestic%20staff."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-8 h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow hover:bg-[#20bd5a] hover:scale-105 active:scale-95 transition-all duration-200 group"
-                    title="Chat on WhatsApp"
+                    title="Chat with Maid for Ghar on WhatsApp"
                     aria-label="WhatsApp"
                   >
                     <WhatsAppIcon className="w-4 h-4 text-white fill-current group-hover:scale-110 transition-transform" />

@@ -377,7 +377,7 @@ export const LegalInfoModal: React.FC<LegalInfoModalProps> = ({
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <a
-                    href="https://api.whatsapp.com/send?text=Hello%20Maid%20for%20Ghar!%20I%20would%20like%20to%20inquire%20about%20domestic%20staff."
+                    href="https://api.whatsapp.com/send?phone=919364798027&text=Hello%20Maid%20for%20Ghar!%20I%20would%20like%20to%20inquire%20about%20domestic%20staff."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-xs"
