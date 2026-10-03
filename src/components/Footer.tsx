@@ -80,7 +80,7 @@ export const Footer: React.FC<FooterProps> = ({
                 </span>
                 <div className="flex items-center gap-2.5">
                   <a
-                    href="https://www.facebook.com/maidforghar/"
+                    href="https://www.facebook.com/profile.php?id=61594983362398"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-8 h-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow hover:bg-[#166fe5] hover:scale-105 active:scale-95 transition-all duration-200 group cursor-pointer"
