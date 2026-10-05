@@ -90,12 +90,12 @@ export const Footer: React.FC<FooterProps> = ({
                     <Facebook className="w-4 h-4 fill-white stroke-none group-hover:scale-110 transition-transform" />
                   </a>
                   <a
-                    href="https://www.instagram.com/maidforghar"
+                    href="https://www.instagram.com/maidforghar/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200 group"
+                    className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shadow hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200 group cursor-pointer"
                     title="Follow Maid for Ghar on Instagram"
-                    aria-label="Instagram"
+                    aria-label="Follow Maid for Ghar on Instagram"
                   >
                     <Instagram className="w-4 h-4 text-white stroke-[2.2] group-hover:scale-110 transition-transform" />
                   </a>
