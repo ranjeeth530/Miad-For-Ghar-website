@@ -71,8 +71,9 @@ export interface BookingRequest {
   specialInstructions?: string;
   status: 'Pending' | 'In Touch' | 'Interview Scheduled' | 'Helper Assigned' | 'Completed' | 'Cancelled';
   createdAt: string;
-  smsConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending';
-  whatsappConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending';
+  smsConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending' | 'Failed';
+  whatsappConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending' | 'Failed';
+  customerWhatsAppUrl?: string;
 }
 
 export interface CustomInquiry {
@@ -83,8 +84,9 @@ export interface CustomInquiry {
   requirement: string;
   urgency: 'Immediate (Today)' | 'As Soon As Possible' | 'This Week' | 'General Query';
   createdAt: string;
-  smsConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending';
-  whatsappConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending';
+  smsConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending' | 'Failed';
+  whatsappConfirmationStatus?: 'Sent' | 'Delivered' | 'Pending' | 'Failed';
+  customerWhatsAppUrl?: string;
 }
 
 export interface NotificationDispatchLog {
@@ -94,10 +96,11 @@ export interface NotificationDispatchLog {
   recipientPhone: string;
   templateType: 'booking_confirmation' | 'callback_inquiry' | 'interview_scheduled' | 'custom_alert';
   message: string;
-  status: 'Delivered' | 'Sent' | 'Failed';
+  status: 'Delivered' | 'Sent' | 'Failed' | 'Pending';
   gateway: string;
   relatedId: string;
   timestamp: string;
+  customerWhatsAppUrl?: string;
 }
 
 export interface Testimonial {

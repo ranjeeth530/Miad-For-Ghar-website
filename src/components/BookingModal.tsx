@@ -698,37 +698,43 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div className="bg-[#FAF9F5] p-3 rounded-xl border border-gray-200 text-left text-xs space-y-2 max-w-sm mx-auto">
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 text-emerald-900 text-[11px] leading-tight flex items-start gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>SMS & WhatsApp confirmation sent to <strong>{phone}</strong>.</span>
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 text-emerald-950 text-[11px] leading-tight flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-bold text-emerald-900">Request Registered for {phone}</div>
+                    <div className="text-[10.5px] text-emerald-800 mt-0.5">
+                      Our placement coordinator will reach out directly on WhatsApp or Call within 30 minutes.
+                    </div>
+                  </div>
                 </div>
 
                 <div className="text-[11px] space-y-1 text-gray-700">
                   <div className="font-bold text-[#1C2723]">Next steps:</div>
                   <div className="flex items-start gap-1">
                     <span className="text-[#2A5A43] font-bold">1.</span>
-                    <span>Placement manager will call within <strong>30 minutes</strong>.</span>
+                    <span>Placement manager reviews requirements and calls within <strong>30 minutes</strong>.</span>
                   </div>
                   <div className="flex items-start gap-1">
                     <span className="text-[#2A5A43] font-bold">2.</span>
-                    <span>100% verified candidate profiles shared on WhatsApp.</span>
+                    <span>100% verified candidate profiles shared with you on WhatsApp.</span>
                   </div>
                   <div className="flex items-start gap-1">
                     <span className="text-[#2A5A43] font-bold">3.</span>
-                    <span>Free telephonic interview before placement.</span>
+                    <span>Free telephonic interview arranged before confirmation.</span>
                   </div>
                 </div>
               </div>
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
                 <a
-                  href={`https://api.whatsapp.com/send?phone=919364798027&text=${encodeURIComponent(`Hello Maid for Ghar! I just booked request #${confirmedBookingId} for ${customerName || 'Domestic Staff'}. Please share verified profiles.`)}`}
+                  href={`https://api.whatsapp.com/send?phone=919364798027&text=${encodeURIComponent(`Hello Maid for Ghar! I just booked request #${confirmedBookingId} for ${customerName || 'Domestic Staff'} in ${phone}. Please share verified profiles.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                  title="Connect directly on WhatsApp with Maid for Ghar"
                 >
                   <WhatsAppIcon className="w-4 h-4" />
-                  <span>WhatsApp Placement Desk</span>
+                  <span>Chat on WhatsApp Now</span>
                 </a>
                 <button
                   type="button"

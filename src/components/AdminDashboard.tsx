@@ -1154,23 +1154,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             >
                               <Phone className="w-3 h-3 text-[#D96C4E]" /> {b.phone}
                             </a>
-                            <a
-                              href={`https://wa.me/${b.phone.replace(/[^0-9]/g, '')}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-emerald-700 hover:text-emerald-800 flex items-center gap-0.5 text-[10px] font-bold"
-                              title="Message customer on WhatsApp"
-                            >
-                              <MessageCircle className="w-3 h-3 text-emerald-600" /> Chat
-                            </a>
+                            {(() => {
+                              const digits = b.phone.replace(/\D/g, '');
+                              const intl = digits.length === 10 ? `91${digits}` : (digits.startsWith('91') ? digits : `91${digits}`);
+                              const defaultMsg = `✨ *Maid for Ghar - Placement Request Confirmed*\n\nHello *${b.customerName}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${b.id}\n🧹 *Service:* ${b.serviceTitle}\n📍 *City:* ${b.city}${b.startDate ? `\n📅 *Requested Start:* ${b.startDate}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will reach out shortly with verified staff profiles.`;
+                              const waUrl = b.customerWhatsAppUrl || `https://wa.me/${intl}?text=${encodeURIComponent(defaultMsg)}`;
+                              return (
+                                <a
+                                  href={waUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#25D366] hover:bg-[#20bd5a] text-white text-[10px] font-bold shadow-2xs transition-colors"
+                                  title="Send pre-filled booking confirmation to customer on WhatsApp"
+                                >
+                                  <MessageCircle className="w-3 h-3" />
+                                  <span>{b.whatsappConfirmationStatus === 'Delivered' ? 'WA Live' : 'Send WA'}</span>
+                                </a>
+                              );
+                            })()}
                           </div>
                           <div className="flex items-center gap-1 mt-1">
-                            <span className="inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-emerald-50 text-[9px] font-bold text-emerald-800 border border-emerald-200" title="SMS confirmation delivered">
-                              <Smartphone className="w-2.5 h-2.5 text-emerald-600" /> SMS
-                            </span>
-                            <span className="inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-green-50 text-[9px] font-bold text-green-800 border border-green-200" title="WhatsApp confirmation delivered">
-                              <MessageCircle className="w-2.5 h-2.5 text-green-600" /> WA
-                            </span>
+                            {b.whatsappConfirmationStatus === 'Delivered' ? (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-emerald-50 text-[9px] font-bold text-emerald-800 border border-emerald-200" title="Delivered via Meta WhatsApp Cloud API">
+                                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" /> WA Live
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-amber-50 text-[9px] font-medium text-amber-800 border border-amber-200" title="1-Click WhatsApp: Click 'Send WA' above to message customer directly">
+                                WA: 1-Click
+                              </span>
+                            )}
+                            {b.smsConfirmationStatus === 'Delivered' ? (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-emerald-50 text-[9px] font-bold text-emerald-800 border border-emerald-200" title="Delivered via Twilio SMS">
+                                <Smartphone className="w-2.5 h-2.5 text-emerald-600" /> SMS
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-gray-50 text-[9px] font-medium text-gray-500 border border-gray-200" title="Twilio SMS credentials required in server environment for automated SMS delivery">
+                                SMS: Manual
+                              </span>
+                            )}
                           </div>
                         </td>
 
@@ -1313,7 +1334,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div className="text-[#4A5A53]">Requirement: "{inq.requirement}"</div>
                     <div className="text-gray-400 text-[10px]">City: {inq.city} • Urgency: {inq.urgency}</div>
                   </div>
-                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+                    {(() => {
+                      const digits = inq.phone.replace(/\D/g, '');
+                      const intl = digits.length === 10 ? `91${digits}` : (digits.startsWith('91') ? digits : `91${digits}`);
+                      const inqMsg = `✨ *Maid for Ghar - Callback Inquiry Follow-up*\n\nHello *${inq.name}*,\n\nWe received your request regarding: "${inq.requirement}".\nOur domestic placement specialist is available to assist you right away.\n📞 Helpline: +91 93647 98027`;
+                      const waUrl = inq.customerWhatsAppUrl || `https://wa.me/${intl}?text=${encodeURIComponent(inqMsg)}`;
+                      return (
+                        <a
+                          href={waUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold flex items-center gap-1 shadow-2xs text-xs"
+                          title="Send pre-filled WhatsApp message directly to client"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Client
+                        </a>
+                      );
+                    })()}
                     <a
                       href={`tel:${inq.phone}`}
                       className="px-3 py-1.5 rounded-lg bg-[#2A5A43] hover:bg-[#1E4231] text-white font-bold flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-[#2A5A43]"
@@ -1761,6 +1799,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
 
+          {/* Notification Delivery Gateway Notice */}
+          <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/80 rounded-2xl p-4 text-xs text-gray-800 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-xl bg-[#25D366] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                <MessageCircle className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="font-bold text-[#1C2723] text-sm flex items-center gap-2">
+                  SMS & WhatsApp Notification Hub
+                </div>
+                <p className="text-[#4A5A53] text-xs mt-0.5 leading-relaxed">
+                  <strong>1-Click WhatsApp Direct:</strong> Click the green <strong>"Send WhatsApp"</strong> button on any log entry below to immediately open WhatsApp with the personalized confirmation pre-filled for that customer.
+                  <br />
+                  <span className="text-[11px] text-gray-500">
+                    *Automated cellular SMS and background WhatsApp delivery require telecom API credentials (Twilio or Meta WhatsApp Cloud API) configured in the server environment.
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Notification Logs Table */}
           <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
             <div className="p-4 border-b border-gray-200 bg-[#FAF9F5] flex items-center justify-between">
@@ -1785,7 +1844,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <th className="p-3.5">Message Content</th>
                     <th className="p-3.5">Gateway Provider</th>
                     <th className="p-3.5">Status</th>
-                    <th className="p-3.5">Time Sent</th>
+                    <th className="p-3.5">Action</th>
+                    <th className="p-3.5">Time Logged</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 font-medium text-[#1C2723]">
@@ -1853,9 +1913,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </td>
 
                         <td className="p-3.5">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" /> {l.status}
-                          </span>
+                          {l.status === 'Delivered' ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Delivered
+                            </span>
+                          ) : l.status === 'Failed' ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-bold border border-red-200">
+                              Failed
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-medium border border-amber-200" title="Gateway key needed for auto-send. Use 1-Click WhatsApp action to send now.">
+                              1-Click Ready
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="p-3.5">
+                          {l.channel === 'WhatsApp' ? (
+                            <a
+                              href={l.customerWhatsAppUrl || `https://wa.me/91${l.recipientPhone.replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(l.message)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white text-[10px] font-bold shadow-2xs transition-colors whitespace-nowrap"
+                              title="Send this message directly to customer on WhatsApp"
+                            >
+                              <MessageCircle className="w-3 h-3" />
+                              <span>Send WhatsApp</span>
+                            </a>
+                          ) : (
+                            <span className="text-[10px] text-gray-400 italic">SMS Template</span>
+                          )}
                         </td>
 
                         <td className="p-3.5 text-[11px] text-gray-500 whitespace-nowrap">
@@ -1939,15 +2026,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       >
                         <Phone className="w-3 h-3" /> Call
                       </a>
-                      <a
-                        href={`https://wa.me/${selectedBookingForDetails.phone.replace(/[^0-9]/g, '')}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-1 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5"
-                        title="WhatsApp Chat"
-                      >
-                        <MessageCircle className="w-3 h-3" /> WhatsApp
-                      </a>
+                      {(() => {
+                        const digits = selectedBookingForDetails.phone.replace(/\D/g, '');
+                        const intl = digits.length === 10 ? `91${digits}` : (digits.startsWith('91') ? digits : `91${digits}`);
+                        const defaultMsg = `✨ *Maid for Ghar - Placement Request #${selectedBookingForDetails.id}*\n\nHello *${selectedBookingForDetails.customerName}*,\n\nWe have received your domestic help placement request for ${selectedBookingForDetails.serviceTitle} in ${selectedBookingForDetails.city}.\nOur placement officer will connect with you shortly.\n📞 Helpline: +91 93647 98027`;
+                        const waUrl = selectedBookingForDetails.customerWhatsAppUrl || `https://wa.me/${intl}?text=${encodeURIComponent(defaultMsg)}`;
+                        return (
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-1 rounded bg-[#25D366] text-white hover:bg-[#20bd5a] transition-colors inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 shadow-2xs"
+                            title="Send pre-filled booking confirmation to customer on WhatsApp"
+                          >
+                            <MessageCircle className="w-3 h-3" /> WhatsApp Client
+                          </a>
+                        );
+                      })()}
                     </div>
                   </div>
                   {selectedBookingForDetails.email && (

@@ -643,20 +643,61 @@ async function startServer() {
       ? `✨ *Maid for Ghar - Placement Request Confirmed*\n\nHello *${name}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${id}\n🧹 *Service:* ${serviceTitle || 'Domestic Staff'}${helperName ? `\n👤 *Selected Staff:* ${helperName}` : ''}\n📍 *City:* ${city}${startDate ? `\n📅 *Requested Start:* ${startDate}` : ''}${salaryRange ? `\n💰 *Budget / Salary Range:* ${salaryRange}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will reach out within 30 minutes to discuss candidate profiles and schedule a telephonic interview.\n\n_🛡️ 100% Police Verified • Free Replacement Guarantee • Safe In-Home Domestic Support_`
       : `✨ *Maid for Ghar - Fast Callback Registered*\n\nHello *${name}*,\n\nThank you for reaching out! We have registered your domestic help callback request:\n📌 *Inquiry ID:* #${id}\n📍 *City:* ${city}\n📝 *Requirement:* ${requirement || 'Domestic Help Placement'}\n📞 *Helpline:* +91 93647 98027\n\nOur domestic placement specialist is reviewing available verified staff profiles and will call you on *${cleanPhone}* shortly.\n\n_🛡️ Background-Checked Domestic Staff Across India_`;
 
-    // 3. Live or Instant Automated Dispatch Logic
-    let gatewayNameSMS = 'Automated SMS Gateway (Instant)';
-    let gatewayNameWA = 'WhatsApp Business Cloud API';
-    let smsStatus = 'Delivered';
-    let waStatus = 'Delivered';
+    // Extract 10-digit Indian mobile number
+    const phoneDigits = cleanPhone.replace(/\D/g, '');
+    const clean10 = phoneDigits.slice(-10);
+    const recipientIntl = clean10.length === 10 ? `91${clean10}` : (phoneDigits.startsWith('91') ? phoneDigits : `91${phoneDigits}`);
 
-    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+    // Direct link to open WhatsApp conversation with the customer (prefilled with confirmation)
+    const customerWhatsAppUrl = `https://wa.me/${recipientIntl}?text=${encodeURIComponent(waMessage)}`;
+
+    // Direct link for customer to message Maid for Ghar desk (+91 93647 98027)
+    const companyDeskWhatsAppUrl = `https://api.whatsapp.com/send?phone=919364798027&text=${encodeURIComponent(
+      type === 'booking'
+        ? `Hello Maid for Ghar! I registered booking #${id} for ${name} (${serviceTitle || 'Domestic Staff'}). Please share verified helper profiles.`
+        : `Hello Maid for Ghar! I requested callback #${id} for ${name} in ${city}. Please call me.`
+    )}`;
+
+    // 3. Live Automated Dispatch Logic
+    let gatewayNameSMS = 'SMS Gateway (Not Configured)';
+    let smsStatus: 'Delivered' | 'Sent' | 'Failed' | 'Pending' = 'Pending';
+
+    let gatewayNameWA = 'WhatsApp 1-Click Direct (Web/App)';
+    let waStatus: 'Delivered' | 'Sent' | 'Failed' | 'Pending' = 'Pending';
+
+    // Validate whether live Twilio credentials exist (real Twilio SIDs start with 'AC' and are 34 chars)
+    const hasRealTwilioConfig = Boolean(
+      process.env.TWILIO_ACCOUNT_SID &&
+      process.env.TWILIO_ACCOUNT_SID.startsWith('AC') &&
+      process.env.TWILIO_ACCOUNT_SID.length === 34 &&
+      process.env.TWILIO_AUTH_TOKEN &&
+      process.env.TWILIO_PHONE_NUMBER &&
+      !process.env.TWILIO_PHONE_NUMBER.includes('@')
+    );
+
+    // Validate whether live Meta WhatsApp Cloud API credentials exist
+    const hasRealWhatsAppCloudConfig = Boolean(
+      process.env.WHATSAPP_CLOUD_API_TOKEN &&
+      process.env.WHATSAPP_CLOUD_API_TOKEN.length > 20 &&
+      process.env.WHATSAPP_PHONE_NUMBER_ID &&
+      process.env.WHATSAPP_PHONE_NUMBER_ID.length > 5
+    );
+
+    const hasRealTwilioWaConfig = Boolean(
+      hasRealTwilioConfig &&
+      process.env.TWILIO_WHATSAPP_NUMBER &&
+      !process.env.TWILIO_WHATSAPP_NUMBER.includes('@')
+    );
+
+    // Check Twilio SMS Gateway
+    if (hasRealTwilioConfig) {
       try {
         const authHeader = 'Basic ' + Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
-        const formattedRecipient = cleanPhone.startsWith('+') ? cleanPhone : `+91${cleanPhone.replace(/\D/g, '').slice(-10)}`;
+        const formattedRecipient = `+${recipientIntl}`;
         
         const smsParams = new URLSearchParams({
           To: formattedRecipient,
-          From: process.env.TWILIO_PHONE_NUMBER,
+          From: process.env.TWILIO_PHONE_NUMBER!,
           Body: smsMessage
         });
 
@@ -673,39 +714,111 @@ async function startServer() {
           gatewayNameSMS = 'Twilio SMS Live Gateway';
           smsStatus = 'Delivered';
         } else {
-          gatewayNameSMS = 'Twilio SMS Dispatch';
-          smsStatus = 'Sent';
+          gatewayNameSMS = 'Twilio SMS (API Error)';
+          smsStatus = 'Failed';
         }
       } catch (err) {
         console.error('Twilio SMS dispatch notice:', err);
+        gatewayNameSMS = 'Twilio SMS (Exception)';
+        smsStatus = 'Failed';
       }
+    } else {
+      gatewayNameSMS = 'SMS Gateway Not Configured (Twilio Key Required)';
+      smsStatus = 'Pending';
+    }
+
+    // Check WhatsApp Automated Gateway (Meta WhatsApp Cloud API or Twilio WhatsApp)
+    if (hasRealWhatsAppCloudConfig) {
+      try {
+        const waRes = await fetch(`https://graph.facebook.com/v18.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.WHATSAPP_CLOUD_API_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: recipientIntl,
+            type: 'text',
+            text: { preview_url: false, body: waMessage }
+          })
+        });
+
+        if (waRes.ok) {
+          gatewayNameWA = 'Meta WhatsApp Cloud API Live';
+          waStatus = 'Delivered';
+        } else {
+          gatewayNameWA = 'Meta WhatsApp Cloud API (API Error)';
+          waStatus = 'Failed';
+        }
+      } catch (err) {
+        console.error('WhatsApp Cloud API notice:', err);
+        gatewayNameWA = 'WhatsApp Cloud API (Exception)';
+        waStatus = 'Failed';
+      }
+    } else if (hasRealTwilioWaConfig) {
+      try {
+        const authHeader = 'Basic ' + Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString('base64');
+        const waParams = new URLSearchParams({
+          To: `whatsapp:+${recipientIntl}`,
+          From: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER!}`,
+          Body: waMessage
+        });
+
+        const twilioRes = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/Messages.json`, {
+          method: 'POST',
+          headers: {
+            'Authorization': authHeader,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: waParams.toString()
+        });
+
+        if (twilioRes.ok) {
+          gatewayNameWA = 'Twilio WhatsApp Live Gateway';
+          waStatus = 'Delivered';
+        } else {
+          gatewayNameWA = 'Twilio WhatsApp (API Error)';
+          waStatus = 'Failed';
+        }
+      } catch (err) {
+        console.error('Twilio WhatsApp dispatch notice:', err);
+        gatewayNameWA = 'Twilio WhatsApp (Exception)';
+        waStatus = 'Failed';
+      }
+    } else {
+      gatewayNameWA = 'WhatsApp 1-Click Direct (Web/App)';
+      waStatus = 'Pending';
     }
 
     // Create notification log entries
     const smsLog = {
       id: `notif-sms-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      channel: 'SMS',
+      channel: 'SMS' as const,
       recipientName: name,
       recipientPhone: cleanPhone,
-      templateType: type === 'booking' ? 'booking_confirmation' : 'callback_inquiry',
+      templateType: (type === 'booking' ? 'booking_confirmation' : 'callback_inquiry') as any,
       message: smsMessage,
       status: smsStatus,
       gateway: gatewayNameSMS,
       relatedId: id,
-      timestamp
+      timestamp,
+      customerWhatsAppUrl
     };
 
     const waLog = {
       id: `notif-wa-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      channel: 'WhatsApp',
+      channel: 'WhatsApp' as const,
       recipientName: name,
       recipientPhone: cleanPhone,
-      templateType: type === 'booking' ? 'booking_confirmation' : 'callback_inquiry',
+      templateType: (type === 'booking' ? 'booking_confirmation' : 'callback_inquiry') as any,
       message: waMessage,
       status: waStatus,
       gateway: gatewayNameWA,
       relatedId: id,
-      timestamp
+      timestamp,
+      customerWhatsAppUrl
     };
 
     notificationLogs.unshift(smsLog);
@@ -715,12 +828,14 @@ async function startServer() {
       notificationLogs = notificationLogs.slice(0, 500);
     }
 
-    const whatsappDirectUrl = `https://api.whatsapp.com/send?phone=919364798027&text=${encodeURIComponent(waMessage)}`;
-
     return {
+      smsStatus,
+      waStatus,
       smsLog,
       waLog,
-      whatsappDirectUrl
+      customerWhatsAppUrl,
+      companyDeskWhatsAppUrl,
+      whatsappDirectUrl: companyDeskWhatsAppUrl
     };
   };
 
@@ -970,7 +1085,30 @@ async function startServer() {
     const city = sanitizeText(req.body.city, 50);
 
     const bookingId = `BK-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
-    const booking = {
+    const serviceTitle = sanitizeText(req.body.serviceTitle, 100) || 'Domestic Staff';
+    const startDate = sanitizeText(req.body.startDate, 30) || 'Immediate';
+    const helperName = sanitizeText(req.body.helperName, 100) || undefined;
+    const salaryRange = sanitizeText(req.body.salaryRange, 50) || undefined;
+
+    // Dispatch or prepare notification tracking
+    let dispatchResult: any = null;
+    try {
+      dispatchResult = await dispatchAutomaticConfirmations({
+        type: 'booking',
+        name: customerName,
+        phone,
+        city,
+        id: bookingId,
+        serviceTitle,
+        startDate,
+        helperName,
+        salaryRange
+      });
+    } catch (err) {
+      console.error('Auto notification dispatch notice:', err);
+    }
+
+    const booking: any = {
       id: bookingId,
       customerName,
       phone,
@@ -978,42 +1116,25 @@ async function startServer() {
       city,
       locality: sanitizeText(req.body.locality, 100) || 'Local Area',
       serviceCategory: sanitizeText(req.body.serviceCategory, 50) || 'all_rounder',
-      serviceTitle: sanitizeText(req.body.serviceTitle, 100) || 'Domestic Staff',
+      serviceTitle,
       shiftType: sanitizeText(req.body.shiftType, 50) || 'full_time_8h',
       helperId: sanitizeText(req.body.helperId, 50) || undefined,
-      helperName: sanitizeText(req.body.helperName, 100) || undefined,
-      startDate: sanitizeText(req.body.startDate, 30) || 'Immediate',
+      helperName,
+      startDate,
       timeSlot: sanitizeText(req.body.timeSlot, 50) || undefined,
       householdSize: sanitizeText(req.body.householdSize, 50) || undefined,
-      salaryRange: sanitizeText(req.body.salaryRange, 50) || undefined,
+      salaryRange,
       specialInstructions: sanitizeText(req.body.specialInstructions, 500) || undefined,
       status: 'Pending',
       createdAt: new Date().toISOString(),
-      smsConfirmationStatus: 'Delivered',
-      whatsappConfirmationStatus: 'Delivered'
+      smsConfirmationStatus: dispatchResult?.smsStatus || 'Pending',
+      whatsappConfirmationStatus: dispatchResult?.waStatus || 'Pending',
+      customerWhatsAppUrl: dispatchResult?.customerWhatsAppUrl
     };
 
     bookings.unshift(booking);
     saveJson(BOOKINGS_FILE, bookings);
     persistBookingToFirestore(booking);
-
-    // Auto-dispatch SMS & WhatsApp notifications
-    let dispatchResult = null;
-    try {
-      dispatchResult = await dispatchAutomaticConfirmations({
-        type: 'booking',
-        name: booking.customerName,
-        phone: booking.phone,
-        city: booking.city,
-        id: bookingId,
-        serviceTitle: booking.serviceTitle,
-        startDate: booking.startDate,
-        helperName: booking.helperName,
-        salaryRange: booking.salaryRange
-      });
-    } catch (err) {
-      console.error('Auto notification dispatch notice:', err);
-    }
 
     res.status(201).json({
       id: booking.id,
@@ -1080,7 +1201,22 @@ async function startServer() {
     const requirement = sanitizeText(req.body.requirement, 500);
 
     const inquiryId = `INQ-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
-    const inquiry = {
+    // Auto-dispatch or track notification
+    let dispatchResult: any = null;
+    try {
+      dispatchResult = await dispatchAutomaticConfirmations({
+        type: 'inquiry',
+        name,
+        phone,
+        city,
+        id: inquiryId,
+        requirement
+      });
+    } catch (err) {
+      console.error('Auto notification dispatch notice:', err);
+    }
+
+    const inquiry: any = {
       id: inquiryId,
       name,
       phone,
@@ -1088,28 +1224,14 @@ async function startServer() {
       requirement,
       urgency: sanitizeText(req.body.urgency, 50) || 'Immediate (Today)',
       createdAt: new Date().toISOString(),
-      smsConfirmationStatus: 'Delivered',
-      whatsappConfirmationStatus: 'Delivered'
+      smsConfirmationStatus: dispatchResult?.smsStatus || 'Pending',
+      whatsappConfirmationStatus: dispatchResult?.waStatus || 'Pending',
+      customerWhatsAppUrl: dispatchResult?.customerWhatsAppUrl
     };
 
     customInquiries.unshift(inquiry);
     saveJson(INQUIRIES_FILE, customInquiries);
     persistInquiryToFirestore(inquiry);
-
-    // Auto-dispatch SMS & WhatsApp notifications
-    let dispatchResult = null;
-    try {
-      dispatchResult = await dispatchAutomaticConfirmations({
-        type: 'inquiry',
-        name: inquiry.name,
-        phone: inquiry.phone,
-        city: inquiry.city,
-        id: inquiryId,
-        requirement: inquiry.requirement
-      });
-    } catch (err) {
-      console.error('Auto notification dispatch notice:', err);
-    }
 
     res.status(201).json({
       id: inquiry.id,
@@ -1118,8 +1240,9 @@ async function startServer() {
       urgency: inquiry.urgency,
       status: 'Submitted',
       createdAt: inquiry.createdAt,
-      smsConfirmationStatus: 'Delivered',
-      whatsappConfirmationStatus: 'Delivered',
+      smsConfirmationStatus: inquiry.smsConfirmationStatus,
+      whatsappConfirmationStatus: inquiry.whatsappConfirmationStatus,
+      customerWhatsAppUrl: inquiry.customerWhatsAppUrl,
       whatsappDirectUrl: dispatchResult?.whatsappDirectUrl,
       message: 'Your callback inquiry has been submitted securely.'
     });

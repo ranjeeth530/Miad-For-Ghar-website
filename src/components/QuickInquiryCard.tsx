@@ -67,15 +67,28 @@ export const QuickInquiryCard: React.FC<QuickInquiryCardProps> = ({
           
           <div className="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800 px-2.5 py-1 rounded-lg text-[10.5px] font-medium mx-auto max-w-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Confirmation sent to <strong>{phone}</strong></span>
+            <span>Request registered for <strong>{phone}</strong></span>
           </div>
 
           <p className="text-[11px] text-[#4A5A53]">
-            Thank you, {name}. Our specialist will call within 30 mins to discuss verified candidates.
+            Thank you, {name}. Our domestic placement specialist will call or WhatsApp your number within 30 mins.
           </p>
-          <p className="text-[10.5px] text-[#2A5A43] font-medium">
-            For urgent requests, dial our direct helpline: <a href="tel:+919364798027" className="font-bold underline hover:text-[#1E4231]">+91 93647 98027</a>
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1">
+            <a
+              href={`https://api.whatsapp.com/send?phone=919364798027&text=${encodeURIComponent(`Hello Maid for Ghar! I just requested a callback for ${name} (${city}) regarding domestic help. Please connect.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white text-[11px] font-bold inline-flex items-center gap-1 shadow-2xs"
+            >
+              <span>Chat on WhatsApp</span>
+            </a>
+            <a
+              href="tel:+919364798027"
+              className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-semibold inline-flex items-center gap-1"
+            >
+              <span>Call Helpline</span>
+            </a>
+          </div>
           {onCloseModal && (
             <button
               onClick={() => { setSubmitted(false); onCloseModal(); }}
