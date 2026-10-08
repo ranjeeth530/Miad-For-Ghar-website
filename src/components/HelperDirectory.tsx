@@ -346,7 +346,7 @@ export const HelperDirectory: React.FC<HelperDirectoryProps> = ({
                         className="px-2 py-0.5 rounded-md bg-[#F1F4EB] text-[#2A5A43] text-[9.5px] font-semibold flex items-center gap-1"
                       >
                         <ShieldCheck className="w-2.5 h-2.5 text-[#2A5A43]" />
-                        {badge === 'police_verified' ? '100% Verified' : badge === 'id_verified' ? '100% Verified Staff' : 'Health Certified'}
+                        {badge === 'police_verified' ? '100% Verified Staff' : badge === 'id_verified' ? 'ID Verified' : 'Health Certified'}
                       </span>
                     ))}
                   </div>

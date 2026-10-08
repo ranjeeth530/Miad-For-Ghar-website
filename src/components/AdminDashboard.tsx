@@ -75,6 +75,17 @@ interface AdminDashboardProps {
   onOpenBookingModal?: (serviceId?: string) => void;
 }
 
+const getServiceSymbol = (serviceText?: string): string => {
+  const s = (serviceText || '').toLowerCase();
+  if (s.includes('cook') || s.includes('chef') || s.includes('kitchen') || s.includes('culinary')) return '🍳';
+  if (s.includes('baby') || s.includes('nanny') || s.includes('child') || s.includes('infant')) return '👶';
+  if (s.includes('elder') || s.includes('senior') || s.includes('patient') || s.includes('companion') || s.includes('attendant')) return '❤️‍🩹';
+  if (s.includes('driver') || s.includes('chauffeur') || s.includes('car')) return '🚗';
+  if (s.includes('all_rounder') || s.includes('all-rounder') || s.includes('all rounder') || s.includes('household')) return '🏡';
+  if (s.includes('clean') || s.includes('maid') || s.includes('housekeep') || s.includes('dusting')) return '🧹';
+  return '✨';
+};
+
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   bookings,
   inquiries,
@@ -1157,7 +1168,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             {(() => {
                               const digits = b.phone.replace(/\D/g, '');
                               const intl = digits.length === 10 ? `91${digits}` : (digits.startsWith('91') ? digits : `91${digits}`);
-                              const defaultMsg = `✨ *Maid for Ghar - Placement Request Confirmed*\n\nHello *${b.customerName}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${b.id}\n🧹 *Service:* ${b.serviceTitle}\n📍 *City:* ${b.city}${b.startDate ? `\n📅 *Requested Start:* ${b.startDate}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will reach out shortly with verified staff profiles.`;
+                              const symbol = getServiceSymbol(b.serviceTitle || b.serviceCategory);
+                              const defaultMsg = `✨ *Maid for Ghar - Placement Request Confirmed*\n\nHello *${b.customerName}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${b.id}\n${symbol} *Service:* ${b.serviceTitle}\n📍 *City:* ${b.city}${b.startDate ? `\n📅 *Requested Start:* ${b.startDate}` : ''}${b.salaryRange ? `\n💰 *Budget / Salary:* ${b.salaryRange}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will reach out within 30 minutes to discuss candidate profiles and schedule a telephonic interview.\n\n_🛡️ 100% Verified Staff • Free Replacement Guarantee • Safe In-Home Domestic Support_`;
                               const waUrl = b.customerWhatsAppUrl || `https://wa.me/${intl}?text=${encodeURIComponent(defaultMsg)}`;
                               return (
                                 <a
@@ -1338,7 +1350,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     {(() => {
                       const digits = inq.phone.replace(/\D/g, '');
                       const intl = digits.length === 10 ? `91${digits}` : (digits.startsWith('91') ? digits : `91${digits}`);
-                      const inqMsg = `✨ *Maid for Ghar - Callback Inquiry Follow-up*\n\nHello *${inq.name}*,\n\nWe received your request regarding: "${inq.requirement}".\nOur domestic placement specialist is available to assist you right away.\n📞 Helpline: +91 93647 98027`;
+                      const reqSymbol = getServiceSymbol(inq.requirement);
+                      const inqMsg = `✨ *Maid for Ghar - Callback Inquiry Follow-up*\n\nHello *${inq.name}*,\n\nWe received your domestic help callback request:\n📌 *Inquiry ID:* #${inq.id}\n${reqSymbol} *Requirement:* ${inq.requirement}\n📍 *City:* ${inq.city}\n📞 *Helpline:* +91 93647 98027\n\nOur domestic placement specialist is available to assist you right away with verified candidate options.\n\n_🛡️ 100% Verified Staff Across India_`;
                       const waUrl = inq.customerWhatsAppUrl || `https://wa.me/${intl}?text=${encodeURIComponent(inqMsg)}`;
                       return (
                         <a
@@ -2029,7 +2042,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       {(() => {
                         const digits = selectedBookingForDetails.phone.replace(/\D/g, '');
                         const intl = digits.length === 10 ? `91${digits}` : (digits.startsWith('91') ? digits : `91${digits}`);
-                        const defaultMsg = `✨ *Maid for Ghar - Placement Request #${selectedBookingForDetails.id}*\n\nHello *${selectedBookingForDetails.customerName}*,\n\nWe have received your domestic help placement request for ${selectedBookingForDetails.serviceTitle} in ${selectedBookingForDetails.city}.\nOur placement officer will connect with you shortly.\n📞 Helpline: +91 93647 98027`;
+                        const symbol = getServiceSymbol(selectedBookingForDetails.serviceTitle || selectedBookingForDetails.serviceCategory);
+                        const defaultMsg = `✨ *Maid for Ghar - Placement Request #${selectedBookingForDetails.id}*\n\nHello *${selectedBookingForDetails.customerName}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${selectedBookingForDetails.id}\n${symbol} *Service:* ${selectedBookingForDetails.serviceTitle}\n📍 *City:* ${selectedBookingForDetails.city}${selectedBookingForDetails.startDate ? `\n📅 *Requested Start:* ${selectedBookingForDetails.startDate}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will connect with you shortly with verified candidate profiles.\n\n_🛡️ 100% Verified Staff • Free Replacement Guarantee_`;
                         const waUrl = selectedBookingForDetails.customerWhatsAppUrl || `https://wa.me/${intl}?text=${encodeURIComponent(defaultMsg)}`;
                         return (
                           <a

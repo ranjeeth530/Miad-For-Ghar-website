@@ -638,10 +638,25 @@ async function startServer() {
       ? `[Maid for Ghar] Dear ${name}, your request #${id} for ${serviceTitle || 'Domestic Help'} in ${city} is confirmed! Our placement manager will call within 30 mins. Helpline: +91 93647 98027. 100% Free Replacement Guarantee.`
       : `[Maid for Ghar] Hello ${name}, your domestic help callback inquiry #${id} for ${city} is registered! A placement specialist will call shortly on ${cleanPhone}. Helpline: +91 93647 98027.`;
 
-    // 2. Generate WhatsApp Text Template
+    // Respective service symbol selector
+    const getServiceEmoji = (text?: string): string => {
+      const s = (text || '').toLowerCase();
+      if (s.includes('cook') || s.includes('chef') || s.includes('kitchen') || s.includes('culinary')) return '🍳';
+      if (s.includes('baby') || s.includes('nanny') || s.includes('child') || s.includes('infant')) return '👶';
+      if (s.includes('elder') || s.includes('senior') || s.includes('patient') || s.includes('companion') || s.includes('attendant')) return '❤️‍🩹';
+      if (s.includes('driver') || s.includes('chauffeur') || s.includes('car')) return '🚗';
+      if (s.includes('all_rounder') || s.includes('all-rounder') || s.includes('all rounder') || s.includes('household')) return '🏡';
+      if (s.includes('clean') || s.includes('maid') || s.includes('housekeep') || s.includes('dusting')) return '🧹';
+      return '✨';
+    };
+
+    const serviceEmoji = getServiceEmoji(serviceTitle);
+    const requirementEmoji = getServiceEmoji(requirement);
+
+    // 2. Generate WhatsApp Text Template with Respective Service Symbol and 100% Verified Staff
     const waMessage = type === 'booking'
-      ? `✨ *Maid for Ghar - Placement Request Confirmed*\n\nHello *${name}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${id}\n🧹 *Service:* ${serviceTitle || 'Domestic Staff'}${helperName ? `\n👤 *Selected Staff:* ${helperName}` : ''}\n📍 *City:* ${city}${startDate ? `\n📅 *Requested Start:* ${startDate}` : ''}${salaryRange ? `\n💰 *Budget / Salary Range:* ${salaryRange}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will reach out within 30 minutes to discuss candidate profiles and schedule a telephonic interview.\n\n_🛡️ 100% Police Verified • Free Replacement Guarantee • Safe In-Home Domestic Support_`
-      : `✨ *Maid for Ghar - Fast Callback Registered*\n\nHello *${name}*,\n\nThank you for reaching out! We have registered your domestic help callback request:\n📌 *Inquiry ID:* #${id}\n📍 *City:* ${city}\n📝 *Requirement:* ${requirement || 'Domestic Help Placement'}\n📞 *Helpline:* +91 93647 98027\n\nOur domestic placement specialist is reviewing available verified staff profiles and will call you on *${cleanPhone}* shortly.\n\n_🛡️ Background-Checked Domestic Staff Across India_`;
+      ? `✨ *Maid for Ghar - Placement Request Confirmed*\n\nHello *${name}*,\n\nWe have received your domestic help placement request:\n📌 *Request ID:* #${id}\n${serviceEmoji} *Service:* ${serviceTitle || 'Domestic Staff'}${helperName ? `\n👤 *Selected Staff:* ${helperName}` : ''}\n📍 *City:* ${city}${startDate ? `\n📅 *Requested Start:* ${startDate}` : ''}${salaryRange ? `\n💰 *Budget / Salary Range:* ${salaryRange}` : ''}\n📞 *Helpline:* +91 93647 98027\n\nOur placement officer will reach out within 30 minutes to discuss candidate profiles and schedule a telephonic interview.\n\n_🛡️ 100% Verified Staff • Free Replacement Guarantee • Safe In-Home Domestic Support_`
+      : `✨ *Maid for Ghar - Fast Callback Registered*\n\nHello *${name}*,\n\nThank you for reaching out! We have registered your domestic help callback request:\n📌 *Inquiry ID:* #${id}\n📍 *City:* ${city}\n${requirementEmoji} *Requirement:* ${requirement || 'Domestic Help Placement'}\n📞 *Helpline:* +91 93647 98027\n\nOur domestic placement specialist is reviewing available verified staff profiles and will call you on *${cleanPhone}* shortly.\n\n_🛡️ 100% Verified Staff Across India_`;
 
     // Extract 10-digit Indian mobile number
     const phoneDigits = cleanPhone.replace(/\D/g, '');
@@ -1050,7 +1065,7 @@ async function startServer() {
       badges: ['police_verified', 'id_verified', 'background_checked'],
       specialties: Array.isArray(req.body.specialties) ? req.body.specialties.map((s: any) => sanitizeText(s, 60)) : ['Household Help'],
       availability: sanitizeText(req.body.availability, 50) || 'Immediate',
-      bio: sanitizeText(req.body.bio, 500) || 'Experienced and police-verified domestic professional.',
+      bio: sanitizeText(req.body.bio, 500) || 'Experienced and 100% verified domestic professional.',
       age: Math.max(18, Math.min(70, parseInt(req.body.age, 10) || 30)),
       gender: sanitizeText(req.body.gender, 20) || 'Female',
       verifiedAt: new Date().toISOString().split('T')[0],
@@ -1389,7 +1404,7 @@ async function startServer() {
     }
 
     if (targetChannel === 'whatsapp' || targetChannel === 'both') {
-      const waText = sanitizeText(req.body.message, 500) || `✨ *Maid for Ghar - Placement Alert*\n\nHello *${recipientName}*,\nThis is a test notification confirmation for your domestic help request #${testId}.\n📞 *Helpline:* +91 93647 98027\n\n_100% Police Verified Domestic Staff._`;
+      const waText = sanitizeText(req.body.message, 500) || `✨ *Maid for Ghar - Placement Alert*\n\nHello *${recipientName}*,\nThis is a test notification confirmation for your domestic help request #${testId}.\n📞 *Helpline:* +91 93647 98027\n\n_100% Verified Staff._`;
       const waLog = {
         id: `notif-wa-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         channel: 'WhatsApp',
