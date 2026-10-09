@@ -8,21 +8,31 @@ interface QuickInquiryCardProps {
   isOpenModal?: boolean;
   onCloseModal?: () => void;
   onSubmitInquiry: (inquiry: Omit<CustomInquiry, 'id' | 'createdAt'>) => Promise<any>;
+  selectedCity?: string;
+  onCityChange?: (city: string) => void;
 }
 
 export const QuickInquiryCard: React.FC<QuickInquiryCardProps> = ({
   isOpenModal = false,
   onCloseModal,
-  onSubmitInquiry
+  onSubmitInquiry,
+  selectedCity,
+  onCityChange
 }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('Mumbai');
+  const [city, setCity] = useState(() => (selectedCity && selectedCity !== 'all' ? selectedCity : 'Mumbai'));
   const [requirement, setRequirement] = useState('');
   const [urgency, setUrgency] = useState<'Immediate (Today)' | 'As Soon As Possible' | 'This Week' | 'General Query'>('As Soon As Possible');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selectedCity && selectedCity !== 'all') {
+      setCity(selectedCity);
+    }
+  }, [selectedCity]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

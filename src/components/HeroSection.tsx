@@ -8,7 +8,9 @@ import {
   UtensilsCrossed,
   Baby,
   Car,
-  HeartHandshake
+  HeartHandshake,
+  MapPin,
+  ChevronRight
 } from 'lucide-react';
 import { CustomInquiry } from '../types';
 import heroStaffBanner from '../assets/images/hero_five_services_1788713830332.jpg';
@@ -20,6 +22,7 @@ interface HeroSectionProps {
   onSubmitInquiry?: (inquiry: Omit<CustomInquiry, 'id' | 'createdAt'>) => Promise<any>;
   selectedCity?: string;
   onCityChange?: (city: string) => void;
+  onOpenCityModal?: () => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -27,7 +30,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenBookingModal,
   onPreloadBookingModal,
   selectedCity: controlledCity,
-  onCityChange
+  onCityChange,
+  onOpenCityModal
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('house_cleaning');
 
@@ -116,6 +120,69 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Clean Service Selection & Booking Card */}
             <div className="bg-white p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-gray-200/90 max-w-xl text-left space-y-4">
               
+              {/* Visitor Location / City Selector Bar */}
+              <div className="bg-[#FAF9F5] p-3 rounded-2xl border border-gray-200/90 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#1C2723]">
+                    <MapPin className="w-4 h-4 text-[#2A5A43]" />
+                    <span>Select Your City:</span>
+                    {(!controlledCity || controlledCity === 'all') && (
+                      <span className="text-[10px] font-semibold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                        {controlledCity === 'all' ? 'All India' : 'Choose below'}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onOpenCityModal}
+                    className="text-[11px] font-bold text-[#2A5A43] hover:underline cursor-pointer flex items-center gap-0.5"
+                  >
+                    <span>All 15 Cities</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </button>
+                </div>
+
+                {/* Popular City Quick-Chips */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {['Mumbai', 'Bengaluru', 'Delhi NCR', 'Hyderabad', 'Pune', 'Chennai'].map((cityName) => {
+                    const isSelected = (controlledCity || '').toLowerCase() === cityName.toLowerCase();
+                    return (
+                      <button
+                        key={cityName}
+                        type="button"
+                        onClick={() => onCityChange?.(cityName)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#2A5A43] text-white shadow-2xs ring-1 ring-[#2A5A43]'
+                            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                        }`}
+                      >
+                        {cityName}
+                      </button>
+                    );
+                  })}
+                  {/* If user selected a city outside the top 6 (e.g. Kolkata, Ahmedabad, Gurugram, etc.) */}
+                  {controlledCity && 
+                    controlledCity !== 'all' && 
+                    !['mumbai', 'bengaluru', 'delhi ncr', 'hyderabad', 'pune', 'chennai'].includes(controlledCity.toLowerCase()) && (
+                      <button
+                        type="button"
+                        onClick={onOpenCityModal}
+                        className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#2A5A43] text-white shadow-2xs ring-1 ring-[#2A5A43] transition-all cursor-pointer"
+                      >
+                        {controlledCity}
+                      </button>
+                    )}
+                  <button
+                    type="button"
+                    onClick={onOpenCityModal}
+                    className="px-2 py-1 rounded-lg text-xs font-semibold text-[#D96C4E] hover:bg-amber-50 border border-amber-200 transition-colors cursor-pointer"
+                  >
+                    + More
+                  </button>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs font-bold uppercase tracking-wider text-gray-500">

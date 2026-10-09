@@ -60,6 +60,8 @@ interface BookingModalProps {
   preselectedHelper?: DomesticHelper | null;
   onSubmitBooking: (booking: Omit<BookingRequest, 'id' | 'status' | 'createdAt'>) => Promise<any>;
   className?: string;
+  selectedCity?: string;
+  onCityChange?: (city: string) => void;
 }
 
 export const BookingModal: React.FC<BookingModalProps> = ({
@@ -68,7 +70,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   initialServiceId,
   preselectedHelper,
   onSubmitBooking,
-  className
+  className,
+  selectedCity,
+  onCityChange
 }) => {
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -88,7 +92,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     isoToIndianDate(getTodayIso())
   );
 
-  const [city, setCity] = useState<string>('Mumbai');
+  const [city, setCity] = useState<string>(() => {
+    if (preselectedHelper) return preselectedHelper.city;
+    if (selectedCity && selectedCity !== 'all') return selectedCity;
+    return 'Mumbai';
+  });
   const [locality, setLocality] = useState<string>('');
   const [householdSize, setHouseholdSize] = useState<string>('2–3 BHK');
   const [salaryRange, setSalaryRange] = useState<string>('Rs.  18000-20000 (8-9 hours)');
@@ -123,7 +131,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setServiceCategory(preselectedHelper.category);
       setCity(preselectedHelper.city);
     } else {
-      setCity('Mumbai');
+      setCity(selectedCity && selectedCity !== 'all' ? selectedCity : 'Mumbai');
     }
   };
 
@@ -519,7 +527,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <TwoColumnCityDropdown
                     id="booking-city-select"
                     value={city}
-                    onChange={(newCity) => setCity(newCity)}
+                    onChange={(newCity) => {
+                      setCity(newCity);
+                      onCityChange?.(newCity);
+                    }}
                   />
                 </div>
 

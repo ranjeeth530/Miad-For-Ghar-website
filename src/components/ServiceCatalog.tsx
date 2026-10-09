@@ -29,7 +29,7 @@ interface ServiceCatalogProps {
 export const ServiceCatalog: React.FC<ServiceCatalogProps> = ({
   onOpenBookingModal,
   onPreloadBookingModal,
-  selectedCity = 'Mumbai'
+  selectedCity = ''
 }) => {
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>('all');
   const [detailedService, setDetailedService] = useState<ServiceDetail | null>(null);
@@ -72,7 +72,7 @@ export const ServiceCatalog: React.FC<ServiceCatalogProps> = ({
               Domestic Staffing & Home Care Solutions
             </h2>
             <p className="text-xs sm:text-sm text-[#4A5A53] leading-relaxed">
-              Explore 100% background-verified household services with flexible shift timings, direct candidate interviews, and free replacement guarantees in {selectedCity === 'all' ? 'top cities across India' : selectedCity}.
+              Explore 100% background-verified household services with flexible shift timings, direct candidate interviews, and free replacement guarantees in {selectedCity && selectedCity !== 'all' ? selectedCity : 'major cities across India'}.
             </p>
           </div>
 

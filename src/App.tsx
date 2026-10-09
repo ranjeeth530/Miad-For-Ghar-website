@@ -19,6 +19,7 @@ import { INITIAL_REVIEWS, SERVICE_CATEGORIES } from './constants/appData';
 import { BLOG_POSTS } from './constants/blogData';
 
 import { BookingModal } from './components/BookingModal';
+import { CitySelectionModal } from './components/CitySelectionModal';
 
 // Preloading is no longer necessary as BookingModal is bundled directly for 0ms instant display
 const loadBookingModal = () => {};
@@ -164,15 +165,38 @@ function MainAppContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedCity, setSelectedCity] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return sessionStorage.getItem('user_city') || 'Mumbai';
+      return localStorage.getItem('user_city') || sessionStorage.getItem('user_city') || '';
     }
-    return 'Mumbai';
+    return '';
+  });
+
+  // Prompt new visitors to select their city instead of silently defaulting to Mumbai
+  const [isCityModalOpen, setIsCityModalOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const storedCity = localStorage.getItem('user_city') || sessionStorage.getItem('user_city');
+      const hasPrompted = sessionStorage.getItem('city_prompted');
+      return !storedCity && !hasPrompted;
+    }
+    return false;
   });
 
   const handleCityChange = (newCity: string) => {
     setSelectedCity(newCity);
     if (typeof window !== 'undefined') {
+      localStorage.setItem('user_city', newCity);
       sessionStorage.setItem('user_city', newCity);
+      sessionStorage.setItem('city_prompted', 'true');
+    }
+  };
+
+  const handleCloseCityModal = () => {
+    setIsCityModalOpen(false);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('city_prompted', 'true');
+      // If visitor dismisses without picking a specific city, set to 'all' so they can explore pan-India
+      if (!selectedCity) {
+        handleCityChange('all');
+      }
     }
   };
 
@@ -639,6 +663,7 @@ function MainAppContent() {
         onAdminLogout={handleAdminLogout}
         selectedCity={selectedCity}
         onCityChange={handleCityChange}
+        onOpenCityModal={() => setIsCityModalOpen(true)}
       />
 
       {/* Main App vs Admin View */}
@@ -652,6 +677,7 @@ function MainAppContent() {
             onSubmitInquiry={handleCreateInquiry}
             selectedCity={selectedCity}
             onCityChange={handleCityChange}
+            onOpenCityModal={() => setIsCityModalOpen(true)}
           />
 
           {/* Full Service Catalog View */}
@@ -667,6 +693,8 @@ function MainAppContent() {
           {/* Direct Callback Banner */}
           <QuickInquiryCard
             onSubmitInquiry={handleCreateInquiry}
+            selectedCity={selectedCity}
+            onCityChange={handleCityChange}
           />
 
           {/* Verification & Trust Standards */}
@@ -762,6 +790,8 @@ function MainAppContent() {
           onClose={() => setIsBookingOpen(false)}
           initialServiceId={bookingServiceId}
           preselectedHelper={preselectedHelper}
+          selectedCity={selectedCity}
+          onCityChange={handleCityChange}
           onSubmitBooking={handleCreateBooking}
         />
       )}
@@ -771,6 +801,8 @@ function MainAppContent() {
         isOpenModal={isInquiryOpen}
         onCloseModal={() => setIsInquiryOpen(false)}
         onSubmitInquiry={handleCreateInquiry}
+        selectedCity={selectedCity}
+        onCityChange={handleCityChange}
       />
 
       {/* Global Command Palette / Quick Search Modal */}
@@ -810,8 +842,19 @@ function MainAppContent() {
       />
 
       {/* Floating Action Buttons: WhatsApp Floater (Above) & Call Floater (Below) */}
-      <WhatsAppFloater />
+      <WhatsAppFloater selectedCity={selectedCity} />
       <CallFloater onOpenInquiryModal={() => setIsInquiryOpen(true)} />
+
+      {/* Interactive City Selection Modal for visitors */}
+      {isCityModalOpen && (
+        <CitySelectionModal
+          isOpen={isCityModalOpen}
+          onClose={handleCloseCityModal}
+          selectedCity={selectedCity}
+          onSelectCity={handleCityChange}
+          isFirstVisitPrompt={!selectedCity}
+        />
+      )}
 
     </div>
   );

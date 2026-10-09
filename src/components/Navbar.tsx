@@ -10,7 +10,9 @@ import {
   Search, 
   PhoneCall,
   HelpCircle,
-  Users
+  Users,
+  MapPin,
+  ChevronDown
 } from 'lucide-react';
 import appLogo from '../assets/images/logo_maid_ghar_1788710443908.jpg';
 
@@ -27,6 +29,7 @@ interface NavbarProps {
   onAdminLogout: () => void;
   selectedCity?: string;
   onCityChange?: (city: string) => void;
+  onOpenCityModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,8 +43,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   isAdminLoggedIn,
   onOpenAdminLoginModal,
   onAdminLogout,
-  selectedCity = 'Mumbai',
-  onCityChange
+  selectedCity = '',
+  onCityChange,
+  onOpenCityModal
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
@@ -200,6 +204,28 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Prominent City Selector Pill in Navbar */}
+          <button
+            type="button"
+            onClick={onOpenCityModal}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl bg-[#FAF9F5] hover:bg-[#F1F4EB] border border-[#2A5A43]/20 hover:border-[#2A5A43] text-left transition-all duration-150 cursor-pointer group shadow-2xs"
+            title="Click to select or change your city (15 operational hubs across India)"
+            aria-label={`Current city: ${selectedCity || 'Select City'}. Click to change city.`}
+          >
+            <div className="w-6 h-6 rounded-lg bg-[#2A5A43]/10 group-hover:bg-[#2A5A43] text-[#2A5A43] group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+              <MapPin className="w-3.5 h-3.5 text-[#2A5A43] group-hover:text-white" />
+            </div>
+            <div className="min-w-0 pr-0.5">
+              <div className="text-[9px] uppercase tracking-wider font-extrabold text-gray-400 group-hover:text-[#2A5A43] leading-none">
+                City
+              </div>
+              <div className="text-xs sm:text-[13px] font-bold text-[#1C2723] truncate leading-tight mt-0.5 flex items-center gap-1">
+                <span>{selectedCity === 'all' ? 'All India' : selectedCity || 'Select City'}</span>
+                <ChevronDown className="w-3 h-3 text-gray-400 group-hover:text-[#2A5A43] transition-transform group-hover:translate-y-0.5 shrink-0" />
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Desktop Nav Links with Clean Active Indicator */}
@@ -347,6 +373,29 @@ export const Navbar: React.FC<NavbarProps> = ({
               ⌘K
             </kbd>
           </button>
+
+          {/* Mobile City Selector Card */}
+          <div className="bg-[#FAF9F5] p-3 rounded-2xl border border-gray-200 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#2A5A43] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <MapPin className="w-4 h-4 text-amber-300" />
+              </div>
+              <div>
+                <div className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">Operational Location</div>
+                <div className="text-xs font-bold text-[#1C2723]">{selectedCity === 'all' ? 'All Indian Cities' : selectedCity || 'Select City'}</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenCityModal?.();
+              }}
+              className="px-3 py-1.5 rounded-xl bg-[#2A5A43] hover:bg-[#1E4231] text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs"
+            >
+              Change City
+            </button>
+          </div>
 
           {/* Navigation Links */}
           <div className="flex flex-col gap-1 font-medium text-sm text-[#1C2723] pt-1">

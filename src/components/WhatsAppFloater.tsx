@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ShieldCheck } from 'lucide-react';
 import { WhatsAppIcon } from './icons/WhatsAppIcon';
 import { SERVICE_CATEGORIES, CITIES_LIST } from '../constants/appData';
 
-export const WhatsAppFloater: React.FC = () => {
+interface WhatsAppFloaterProps {
+  selectedCity?: string;
+}
+
+export const WhatsAppFloater: React.FC<WhatsAppFloaterProps> = ({
+  selectedCity: controlledCity
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState('Mumbai');
+  const [selectedCity, setSelectedCity] = useState(() => (controlledCity && controlledCity !== 'all' ? controlledCity : 'Mumbai'));
   const [selectedService, setSelectedService] = useState('house_cleaning');
   const [customMsg, setCustomMsg] = useState('');
+
+  useEffect(() => {
+    if (controlledCity && controlledCity !== 'all') {
+      setSelectedCity(controlledCity);
+    }
+  }, [controlledCity]);
 
   const handleSendWhatsApp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
