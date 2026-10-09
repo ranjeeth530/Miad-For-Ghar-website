@@ -661,9 +661,6 @@ function MainAppContent() {
         isAdminLoggedIn={isAdminLoggedIn}
         onOpenAdminLoginModal={() => setIsAdminLoginOpen(true)}
         onAdminLogout={handleAdminLogout}
-        selectedCity={selectedCity}
-        onCityChange={handleCityChange}
-        onOpenCityModal={() => setIsCityModalOpen(true)}
       />
 
       {/* Main App vs Admin View */}
