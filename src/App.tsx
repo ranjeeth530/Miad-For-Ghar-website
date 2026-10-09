@@ -165,20 +165,19 @@ function MainAppContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedCity, setSelectedCity] = useState<string>(() => {
     if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const cityFromUrl = urlParams.get('city');
+      if (cityFromUrl) {
+        return cityFromUrl;
+      }
       return localStorage.getItem('user_city') || sessionStorage.getItem('user_city') || '';
     }
     return '';
   });
 
-  // Prompt new visitors to select their city instead of silently defaulting to Mumbai
-  const [isCityModalOpen, setIsCityModalOpen] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const storedCity = localStorage.getItem('user_city') || sessionStorage.getItem('user_city');
-      const hasPrompted = sessionStorage.getItem('city_prompted');
-      return !storedCity && !hasPrompted;
-    }
-    return false;
-  });
+  // Keep city modal closed on initial load so visitors from search engines land directly on the homepage
+  // Visitors can easily select their city from the Hero section chips or click 'All 15 Cities'
+  const [isCityModalOpen, setIsCityModalOpen] = useState<boolean>(false);
 
   const handleCityChange = (newCity: string) => {
     setSelectedCity(newCity);

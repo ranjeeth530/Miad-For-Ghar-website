@@ -234,7 +234,7 @@ export const CitySelectionModal: React.FC<CitySelectionModalProps> = ({
             </button>
 
             <span className="text-[11px] text-gray-400">
-              You can change your city anytime from the top navigation bar.
+              You can change your city anytime from the location selector in the hero section.
             </span>
           </div>
 
