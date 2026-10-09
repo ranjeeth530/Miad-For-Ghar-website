@@ -181,7 +181,7 @@ export const HelperDirectory: React.FC<HelperDirectoryProps> = ({
                 className="w-full bg-[#FAF9F5] border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-[#1C2723] focus:ring-2 focus:ring-[#2A5A43] focus:outline-none cursor-pointer"
               >
                 <option value="all">All Shift Hours</option>
-                <option value="part_time">Part-Time (2-4 hrs)</option>
+                <option value="part_time">Part-Time (2-4/5-6 hrs)</option>
                 <option value="full_time_8h">Full-Time (8 hrs)</option>
                 <option value="full_time_12h">Full-Time (12 hrs)</option>
                 <option value="live_in_24h">Live-in (24 hrs)</option>

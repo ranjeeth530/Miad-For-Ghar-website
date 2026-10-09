@@ -984,11 +984,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenBookingModal()}
-                  className="px-2.5 py-1 rounded-lg bg-[#D96C4E] hover:bg-[#c45a3d] text-white text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer shrink-0 shadow-2xs"
+                  className="px-2 py-0.5 rounded-md bg-[#D96C4E] hover:bg-[#c45a3d] text-white text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer shrink-0 shadow-2xs"
                   title="Create New Placement Request"
                 >
-                  <CalendarCheck className="w-3.5 h-3.5 text-amber-200" />
-                  <span>+ New Booking</span>
+                  <CalendarCheck className="w-3 h-3 text-amber-200" />
+                  <span>Book</span>
                 </button>
               )}
 

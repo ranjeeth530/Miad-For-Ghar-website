@@ -45,7 +45,7 @@ const SERVICE_SHORT_TITLES: Record<ServiceCategory, string> = {
 };
 
 const SHIFT_OPTIONS: { id: ShiftType; label: string; hours: string }[] = [
-  { id: 'part_time', label: 'Part-Time', hours: '2–4 hrs' },
+  { id: 'part_time', label: 'Part-Time', hours: '2-4/5-6 hrs' },
   { id: 'full_time_8h', label: 'Day Shift', hours: '8 hrs' },
   { id: 'full_time_12h', label: 'Full Day', hours: '12 hrs' },
   { id: 'live_in_24h', label: 'Live-In', hours: '24 hrs' }
