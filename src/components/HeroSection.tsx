@@ -13,7 +13,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { CustomInquiry } from '../types';
-import heroStaffBanner from '../assets/images/hero_five_services_1788713830332.jpg';
+import heroStaffBanner from '../assets/images/hero_staff_banner_adjusted_1791634440060.jpg';
 
 interface HeroSectionProps {
   onSearch?: (city: string, category: string, shift: string) => void;
@@ -84,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const currentSelectedService = serviceOptions.find(s => s.id === selectedCategory) || serviceOptions[0];
 
   return (
-    <section className="relative z-20 pt-6 pb-8 sm:pt-10 sm:pb-12 bg-[#FAF9F5] border-b border-[#2A5A43]/10">
+    <section className="relative z-20 pt-4 pb-8 sm:pt-5 sm:pb-10 lg:pt-5 lg:pb-10 bg-[#FAF9F5] border-b border-[#2A5A43]/10">
       {/* Subtle ambient lighting with isolated overflow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full bg-[#2A5A43]/5 blur-3xl" />
@@ -92,33 +92,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       <div className="max-w-7xl xl:max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-10 lg:items-end">
+        
+        {/* Top Header: Eyebrow Tagline & Main Headline across Desktop View */}
+        <div className="text-left mb-4 sm:mb-5 lg:mb-6 max-w-3xl space-y-2">
+          {/* Tagline Eyebrow Pill */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#2A5A43]/20 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="font-serif italic font-bold text-[#0F2E20] text-xs sm:text-sm tracking-normal">
+              Where Trust Meets Everyday Care
+            </span>
+          </div>
+
+          {/* Headline */}
+          <div className="space-y-1">
+            <h1 className="font-serif text-2xl sm:text-3xl lg:text-[2.5rem] font-medium leading-[1.18] tracking-tight text-[#1C2723]">
+              Hire trusted domestic help <br className="hidden sm:inline" />
+              <span className="text-[#2A5A43] font-serif italic">for your home and family.</span>
+            </h1>
+
+            <p className="text-xs sm:text-sm text-[#4A5A53] max-w-xl leading-relaxed">
+              Connect with verified house maids, home cooks, babysitters, senior attendants, and drivers with replacement guarantee.
+            </p>
+          </div>
+        </div>
+
+        {/* Aligned 2-Column Grid: Upper level of hero banner aligns directly with container of city & service */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 xl:gap-8 lg:items-stretch">
           
-          {/* Left Column: Clear Value Proposition & Streamlined Search */}
-          <div className="lg:col-span-5 xl:col-span-5 space-y-4 text-left">
-            
-            {/* Tagline Eyebrow Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 sm:py-2 rounded-full bg-white border border-[#2A5A43]/20 shadow-xs">
-              <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-              <span className="font-serif italic font-bold text-[#0F2E20] text-sm sm:text-base tracking-normal">
-                Where Trust Meets Everyday Care
-              </span>
-            </div>
-
-            {/* Headline */}
-            <div className="space-y-1.5">
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.6rem] font-medium leading-[1.18] tracking-tight text-[#1C2723]">
-                Hire trusted domestic help <br className="hidden sm:inline" />
-                <span className="text-[#2A5A43] font-serif italic">for your home and family.</span>
-              </h1>
-
-              <p className="text-xs sm:text-sm text-[#4A5A53] max-w-lg leading-relaxed">
-                Connect with verified house maids, home cooks, babysitters, senior attendants, and drivers with replacement guarantee.
-              </p>
-            </div>
-
-            {/* Clean Service Selection & Booking Card */}
-            <div className="bg-white p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-gray-200/90 max-w-xl text-left space-y-4">
+          {/* Left Column: Container of Select Your City & Select Required Service */}
+          <div className="lg:col-span-5 xl:col-span-5 flex flex-col">
+            <div className="bg-white p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl shadow-md border border-gray-200/90 w-full h-full flex flex-col justify-between space-y-4 text-left">
               
               {/* Visitor Location / City Selector Bar */}
               <div className="bg-[#FAF9F5] p-3 rounded-2xl border border-gray-200/90 space-y-2">
@@ -257,12 +260,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           </div>
 
-          {/* Right Column: Hero Staff Banner Visual (Mobile proportional & enlarged, Desktop bottom-aligned and top elevated) */}
-          <div className="lg:col-span-7 xl:col-span-7 relative flex flex-col justify-end mt-5 sm:mt-6 lg:mt-0">
-            <div className="relative mx-auto max-w-3xl lg:max-w-none w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border-2 border-white/80 ring-1 ring-[#2A5A43]/20 bg-white transition-all duration-300 group">
+          {/* Right Column: Hero Staff Banner Visual (Upper level aligns with city/service in desktop; solid in-flow responsive rendering on mobile ensures cook & driver are always fully visible and never disappear or collapse) */}
+          <div className="lg:col-span-7 xl:col-span-7 relative w-full lg:h-full lg:flex lg:flex-col mt-4 sm:mt-5 lg:mt-0">
+            <div className="relative mx-auto max-w-3xl lg:max-w-none w-full lg:h-full lg:min-h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border-2 border-white/80 ring-1 ring-[#2A5A43]/20 bg-[#F5F2EB] transition-all duration-300 group">
               <img 
                 src={heroStaffBanner} 
                 alt="Maid for Ghar - Trusted domestic staff: Cook, Cleaner, Nanny, Elderly Care, and Driver"
+                width={1376}
+                height={768}
                 referrerPolicy="no-referrer"
                 loading="eager"
                 decoding="async"
@@ -270,19 +275,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/hero_maid_banner.jpg';
                 }}
-                className="w-full aspect-[16/10] sm:aspect-[16/9.2] lg:aspect-auto lg:h-[445px] xl:h-[465px] object-cover object-[center_28%] sm:object-[center_22%] lg:object-[center_12%] block group-hover:scale-[1.015] transition-transform duration-500 ease-out"
+                className="w-full h-auto lg:absolute lg:inset-0 lg:w-full lg:h-full object-cover object-[center_32%] block group-hover:scale-[1.015] transition-transform duration-500 ease-out"
               />
 
               {/* Top Banner Verified Staff Badge */}
-              <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10 bg-[#0F2E20]/90 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full border border-white/20 text-white shadow-sm flex items-center gap-1.5 pointer-events-none">
-                <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
-                <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">
+              <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 bg-[#0F2E20]/90 backdrop-blur-md px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border border-white/20 text-white shadow-sm flex items-center gap-1 sm:gap-1.5 pointer-events-none">
+                <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-400 shrink-0" />
+                <span className="text-[10px] sm:text-xs font-semibold text-white tracking-wide">
                   100% Verified Staff
                 </span>
               </div>
 
               {/* 5 Services Interactive Ribbon Overlay on Banner */}
-              <div className="absolute bottom-1.5 left-1.5 right-1.5 sm:bottom-3 sm:left-3 sm:right-3 bg-[#1C2723]/90 backdrop-blur-md px-1 sm:px-3 py-1 sm:py-2 rounded-xl sm:rounded-2xl border border-white/20 shadow-lg">
+              <div className="absolute bottom-1.5 left-1.5 right-1.5 sm:bottom-3 sm:left-3 sm:right-3 z-10 bg-[#1C2723]/90 backdrop-blur-md px-1 sm:px-3 py-1 sm:py-2 rounded-xl sm:rounded-2xl border border-white/20 shadow-lg">
                 <div className="flex items-center justify-between gap-0.5 sm:gap-1 py-0.5">
                   <button
                     type="button"
@@ -341,7 +346,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Clean Trust Bar Spanning Across Below Aligned Elements */}
-        <div className="pt-4 sm:pt-5 mt-5 sm:mt-6 border-t border-[#2A5A43]/10 flex flex-wrap items-center justify-between gap-y-2 gap-x-4 text-xs text-[#4A5A53]">
+        <div className="pt-3.5 sm:pt-4 mt-4 sm:mt-5 border-t border-[#2A5A43]/10 flex flex-wrap items-center justify-between gap-y-2 gap-x-4 text-xs text-[#4A5A53]">
           <div className="flex flex-wrap items-center gap-y-2 gap-x-5 sm:gap-x-7 font-medium">
             <span className="flex items-center gap-1.5 text-[#1C2723]">
               <ShieldCheck className="w-4 h-4 text-[#2A5A43]" /> 100% Verified Staff
